@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Fabric Defect Detection Result</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 30px 15px;
+      color: white;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .header h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .card {
+      border: none;
+      border-radius: 20px;
+      background: white;
+      color: #333;
+      padding: 40px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+      text-align: center;
+    }
+
+    .card h4 {
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+    }
+
+    .card .lead {
+      font-size: 1.2rem;
+      color: #555;
+    }
+
+    .img-thumbnail {
+      border-radius: 15px;
+      margin-top: 20px;
+      max-height: 300px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+
+    .btn-custom {
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      color: white;
+      padding: 12px 30px;
+      border-radius: 50px;
+      font-weight: bold;
+      border: none;
+      margin-top: 30px;
+      transition: 0.3s;
+    }
+
+    .btn-custom:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+
+    @media (max-width: 768px) {
+      .card {
+        padding: 25px;
+      }
+
+      .header h1 {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+</head>
+<body class="bg-light">
+  <div class="container mt-5">
+    <div class="card shadow p-4 text-center">
+      <h2 class="mb-3">🧵 Fabric Defect Detection Result</h2>
+      <div style="font-size: 2rem;">{{ status_icon }}</div>
+      <h4 class="mt-2">Prediction: <span class="text-primary">{{ label }}</span></h4>
+      <p class="lead">Confidence: {{ confidence }}%</p>
+
+      {% if image_path %}
+        <img src="{{ image_path }}" alt="Uploaded Image" class="img-thumbnail mt-3" style="max-height:300px;">
+      {% endif %}
+
+      <div class="mt-4">
+        <h5>📝 Explanation</h5>
+        <p>{{ explanation }}</p>
+      </div>
+
+      <div class="mt-3">
+        <h5>⭐ Quality Rating:</h5>
+        <div style="font-size: 1.5rem; color: gold;">
+          {% for _ in range(rating) %}★{% endfor %}
+          {% for _ in range(5 - rating) %}☆{% endfor %}
+        </div>
+      </div>
+
+      <div class="mt-4">
+        <h5>💡 Suggestions</h5>
+        <ul class="text-start">
+          {% for item in suggestions %}
+            <li>{{ item }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <div class="mt-4">
+        <h5>📊 Confidence Pie Chart</h5>
+        <canvas id="confidenceChart" style="max-width: 300px; margin: auto;"></canvas>
+      </div>
+
+      {% if heatmap_path %}
+      <div class="mt-4">
+        <h5>🔥 Detected Defect Area</h5>
+        <img src="{{ heatmap_path }}" class="img-thumbnail mt-2" style="max-height: 300px;">
+      </div>
+      {% endif %}
+
+      <form action="/download_pdf" method="POST" class="mt-4">
+        <input type="hidden" name="label" value="{{ label }}">
+        <input type="hidden" name="confidence" value="{{ confidence }}">
+        <input type="hidden" name="explanation" value="{{ explanation }}">
+        <input type="hidden" name="rating" value="{{ rating }}">
+        <input type="hidden" name="heatmap_path" value="{{ heatmap_path }}">
+        {% for item in suggestions %}
+          <input type="hidden" name="suggestions" value="{{ item }}">
+        {% endfor %}
+        <button type="submit" class="btn btn-outline-danger">📄 Download PDF Report</button>
+      </form>
+
+      <a href="/" class="btn btn-secondary mt-3">🔁 Analyze Another Image</a>
+    </div>
+  </div>
+
+  <script>
+    const ctx = document.getElementById('confidenceChart').getContext('2d');
+    const confidenceValue = {{ confidence }};
+    new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Confidence', 'Remaining'],
+        datasets: [{
+          data: [confidenceValue, 100 - confidenceValue],
+          backgroundColor: ['#4facfe', '#e0e0e0'],
+        }]
+      },
+      options: {
+        cutout: '70%',
+        plugins: {
+          legend: {
+            position: 'bottom'
+          }
+        }
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Fabric Defect Report</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            font-size: 14px;
+        }
+        h2 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .section {
+            margin-bottom: 20px;
+        }
+        .rating {
+            color: #f39c12;
+            font-size: 16px;
+        }
+        img {
+            max-width: 300px;
+            max-height: 300px;
+            margin-top: 10px;
+        }
+        ul {
+            padding-left: 18px;
+        }
+    </style>
+</head>
+<body>
+    <h2>🧵 Fabric Defect Detection Report</h2>
+
+    <div class="section">
+        <strong>Prediction:</strong> {{ label }}<br>
+        <strong>Confidence:</strong> {{ confidence }}%<br>
+        <strong>Quality Rating:</strong>
+        <span class="rating">
+            {% for _ in range(rating) %}★{% endfor %}
+            {% for _ in range(5 - rating) %}☆{% endfor %}
+        </span>
+    </div>
+
+    <div class="section">
+        <strong>Explanation:</strong>
+        <p>{{ explanation }}</p>
+    </div>
+
+    <div class="section">
+        <strong>Suggestions:</strong>
+        <ul>
+            {% for item in suggestions %}
+                <li>{{ item }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="section">
+        <strong>Detected Defect Area (Grad-CAM):</strong><br>
+        <img src="{{ image_path }}" alt="Defect Area Highlight">
+    </div>
+</body>
+</html>

@@ -1,0 +1,24 @@
+body {
+    background-color: #f8f9fa;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.card {
+    border-radius: 16px;
+    border: none;
+}
+
+h2 {
+    font-weight: 700;
+}
+
+.btn-primary {
+    padding: 10px 25px;
+    font-size: 16px;
+    border-radius: 8px;
+}
+
+.img-thumbnail {
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
